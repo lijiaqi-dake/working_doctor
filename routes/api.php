@@ -45,6 +45,9 @@ $api->version('v1',[
         //pc端管理员退出接口
             $api->delete('admin','AdminsController@destroy')
             ->name('api.admin.destroy');
+        //pc端管理员退出接口
+            $api->post('admin/judge','AdminsController@Judge')
+            ->name('api.admin.judge.Judge');       
         //pc端管理员个人信息
             $api->get('admin','AdminsController@show')
             ->name('api.admin.show');

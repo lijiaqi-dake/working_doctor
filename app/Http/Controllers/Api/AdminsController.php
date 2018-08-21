@@ -16,7 +16,7 @@ class AdminsController extends Controller
 
 	public function __construct()
     {
-		// $this->middleware('guest:admin');
+		// $this->middleware('guest:admin',['except'=>'store']);
 		// $this->middleware('auth', [            
         //     'except' => ['store']
         // ]);
@@ -30,12 +30,8 @@ class AdminsController extends Controller
        //用户认证
        if (Auth::guard('admin')->attempt($credentials, $request->has('remember'))) { 	
 			
-		    // if (Auth::guard('admin')->attempt(['account' => $request->account,'password' => $request->password])) { 
 			$request->session()->put('admin_code', $request->account);
 
-		    // 登录成功后的相关操作  页面定向
-		    // return redirect()->intended(route('users.show', [Auth::user()]));
-		    // return $this->response->item($admin, new AdminTransformer());
 		    $admins = Auth::guard('admin')->user();		//登陆成功返回当前登陆用户的信息   
 			// $value = $request->session()->get('admin_code');
 			$value = $request->session()->all();
@@ -56,20 +52,32 @@ class AdminsController extends Controller
 	public function destroy(Request $request)
     {
 		if(Auth::guard('admin')->user()){
-			Auth::guard('admin')->logout();
-			// $request->session()->put('admin_code', NULL);
+			$request->session()->flush();   //将session清除
+			// session(['admin_code'=>NULL]);
+			// Auth::guard('admin')->logout();
+
 			// $value = $request->session()->all();
 			// return $value;
 			// return 1;
 		}
-		// $request->session()->put('admin_code', NULL);
-		// $value = $request->session()->all();
-		// return $value;
-        // Auth::logout();
         // session()->flash('success', '您已成功退出！');
 		// return redirect('login'); 页面定向
-		return 0;
-		// return session()->get('user');
+		
+		$value = $request->session()->all();
+        return $value;
+	}
+
+
+	public function Judge(Request $request)
+    {
+		$value = session()->get('admin_code');
+		if($value != NULL){
+            return 1;
+		}
+		else{
+			return 0;
+		}
+		// return $value;
 	}
 	
 
